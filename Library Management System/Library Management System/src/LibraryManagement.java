@@ -57,6 +57,7 @@ public class LibraryManagement extends JFrame implements ActionListener {
     //components for returning book
     private JPanel returnbook;
     private JTextField bookidret;
+    private JTextField dateissuedon;
     private JTextField dateofreturn;
     private JButton confirmreturn;
     private JButton homeret;
@@ -168,6 +169,7 @@ public class LibraryManagement extends JFrame implements ActionListener {
         // Initialize return components
         bookidret = new JTextField(20);
         dateofreturn = new JTextField(10);
+        dateissuedon = new JTextField(20);
         confirmreturn = new JButton("Return");
         confirmreturn.addActionListener(this);
         homeret = new JButton("Back");
@@ -495,9 +497,11 @@ public class LibraryManagement extends JFrame implements ActionListener {
     private void returnbook()
     {
         remove(homeuPanel);
-        returnbook = new JPanel(new GridLayout(3,2));
+        returnbook = new JPanel(new GridLayout(4,2));
         returnbook.add(new JLabel("Book ID"));
         returnbook.add(bookidret);
+        returnbook.add(new JLabel("Issuing Date"));
+        returnbook.add(dateissuedon);
         returnbook.add(new JLabel("Returning Date"));
         returnbook.add(dateofreturn);
         returnbook.add(confirmreturn);
@@ -512,9 +516,10 @@ public class LibraryManagement extends JFrame implements ActionListener {
         boolean ret = false;
         try
         {
-            PreparedStatement statement = conn.prepareStatement("select date_borrowed_on ,duration_month from book_borrowed where book_id = ? and borrowed_by = ?;");
+            PreparedStatement statement = conn.prepareStatement("select date_borrowed_on ,duration_month from book_borrowed where book_id = ? and borrowed_by = ? and date_borrowed_on = ?;");
             statement.setInt(1, Integer.parseInt(bookidret.getText()));
             statement.setString(2, userJTextField.getText());
+            statement.setString(3, dateissuedon.getText());
             ResultSet res = statement.executeQuery();
             res.next();
             date = res.getString("date_borrowed_on");
@@ -527,17 +532,19 @@ public class LibraryManagement extends JFrame implements ActionListener {
             int fine = ((month_gap-duration)*28 + date_gap)*50;
             if(gap>(duration*28))
             {
-                PreparedStatement statement1 = conn.prepareStatement("update book_borrowed set fine_generated = ? where book_id = ? and borrowed_by = ?;");
+                PreparedStatement statement1 = conn.prepareStatement("update book_borrowed set fine_generated = ? where book_id = ? and borrowed_by = ? and date_borrowed_on = ?;");
                 statement1.setInt(1, fine);
                 statement1.setInt(2,Integer.parseInt(bookidret.getText()));
                 statement1.setString(3,userJTextField.getText());
+                statement1.setString(4,dateissuedon.getText());
                 statement1.execute();
                 int opt = JOptionPane.showConfirmDialog(this,"You had returned the book late !! The fine generated is"+fine);
                 if(opt==0)
                 {
-                    statement1 = conn.prepareStatement("delete from book_borrowed where book_id = ? and borrowed_by = ?;");
+                    statement1 = conn.prepareStatement("delete from book_borrowed where book_id = ? and borrowed_by = ? and date_borrowed_on = ?;");
                     statement1.setInt(1, Integer.parseInt(bookidret.getText()));
                     statement1.setString(2, userJTextField.getText());
+                    statement1.setString(3,dateissuedon.getText());
                     statement1.execute();
                     statement1 = conn.prepareStatement("select quantity from book where book_id = ?");
                     statement1.setInt(1,Integer.parseInt(bookidret.getText()));
@@ -558,9 +565,10 @@ public class LibraryManagement extends JFrame implements ActionListener {
             }
             else
             {
-                statement = conn.prepareStatement("delete from book_borrowed where book_id = ? and borrowed_by = ?;");
+                statement = conn.prepareStatement("delete from book_borrowed where book_id = ? and borrowed_by = ? and date_borrowed_on = ?;");
                 statement.setInt(1, Integer.parseInt(bookidret.getText()));
                 statement.setString(2, userJTextField.getText());
+                statement.setString(3,dateissuedon.getText());
                 statement.execute();
                 statement = conn.prepareStatement("select quantity from book where book_id = ?");
                 statement.setInt(1,Integer.parseInt(bookidret.getText()));
@@ -608,7 +616,7 @@ public class LibraryManagement extends JFrame implements ActionListener {
         quantity = Integer.parseInt(res.getString("quantity"));
         if(quantity>0)
         {
-            try {
+            try{
                 PreparedStatement statement1 = conn.prepareStatement("insert into book_borrowed(book_id,borrowed_by,duration_month,date_borrowed_on)values(?,?,?,?);");
                 statement1.setInt(1,Integer.parseInt(bookid.getText()));
                 statement1.setString(2, user);
@@ -620,8 +628,10 @@ public class LibraryManagement extends JFrame implements ActionListener {
                 statement1.setInt(1, quantity);
                 statement1.setInt(2, Integer.parseInt(bookid.getText()));
                 statement1.execute();
-            } catch (Exception e) {
+                }
+                catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
             return true;
         }

@@ -45,15 +45,16 @@ The `JAVA PROJECTS` view allows you to manage your dependencies. More details ca
 
 ## Book_borrowed Table Schema
 
-+------------------+--------------+------+-----+---------+----------------+
-| Field            | Type         | Null | Key | Default | Extra          |
-+------------------+--------------+------+-----+---------+----------------+
-| book_id          | int          | NO   | PRI | NULL    | auto_increment |
-| borrowed_by      | varchar(100) | NO   |     | NULL    |                |
-| duration_month   | int          | NO   |     | NULL    |                |
-| fine_generated   | int          | YES  |     | NULL    |                |
-| date_borrowed_on | date         | YES  |     | NULL    |                |
-+------------------+--------------+------+-----+---------+----------------+
++------------------+--------------+------+-----+---------+-------+
+| Field            | Type         | Null | Key | Default | Extra |
++------------------+--------------+------+-----+---------+-------+
+| book_id          | int          | YES  |     | NULL    |       |
+| borrowed_by      | varchar(100) | YES  |     | NULL    |       |
+| duration_month   | int          | YES  |     | NULL    |       |
+| fine_generated   | int          | YES  |     | NULL    |       |
+| date_borrowed_on | date         | YES  |     | NULL    |       |
+| quantity         | int          | YES  |     | NULL    |       |
++------------------+--------------+------+-----+---------+-------+
 
 ## User Table Schema
 

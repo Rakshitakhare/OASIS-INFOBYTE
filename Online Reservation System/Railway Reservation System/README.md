@@ -40,4 +40,4 @@ Reservations Table
 | source       | varchar(15) | YES  |     | NULL    |       |
 | destination  | varchar(15) | YES  |     | NULL    |       |
 | pnr_number   | int         | NO   | PRI | NULL    |       |
-+--------------+-------------+------+-----+---------+-------+
+

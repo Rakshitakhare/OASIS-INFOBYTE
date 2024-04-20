@@ -552,8 +552,9 @@ public class LibraryManagement extends JFrame implements ActionListener {
                     rest.next();
                     int quantity = rest.getInt("quantity");
                     quantity +=1;
-                    statement = conn.prepareStatement("update book set quantity = ?;");
+                    statement = conn.prepareStatement("update book set quantity = ? where book_id = ?;");
                     statement.setInt(1, quantity);
+                    statement.setInt(2, Integer.parseInt(bookidret.getText()));
                     statement.execute();
                     ret = true;
                 }
@@ -576,8 +577,9 @@ public class LibraryManagement extends JFrame implements ActionListener {
                 rest.next();
                 int quantity = rest.getInt("quantity");
                 quantity +=1;
-                statement = conn.prepareStatement("update book set quantity = ?;");
+                statement = conn.prepareStatement("update book set quantity = ? where book_id = ?;");
                 statement.setInt(1, quantity);
+                statement.setInt(2, Integer.parseInt(bookidret.getText()));
                 statement.execute();
                 ret = true;
             }
